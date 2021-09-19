@@ -1,0 +1,7 @@
+{
+	"maxHealth": 30,
+	"maxMana": 10,
+	"manaIncrement": 1,
+	"initialHandSize": 4,
+	"cardDrawSize": 1
+}

@@ -8,6 +8,9 @@ namespace HearthstoneCLI {
     class Program {
         static void Main(string[] args)
         {
+            while(!Game.Instance.IsOver && Game.Instance.ExecuteNextTurn())
+            {
+            }
         }
     }
 }

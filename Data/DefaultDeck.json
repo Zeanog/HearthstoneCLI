@@ -1,0 +1,96 @@
+[
+	{
+		"count": 10,
+		"card": {
+			"name":"Deal 10 Damage",
+			"cost": 1,
+			"actions": {
+				"deal": 10
+			}
+		}
+	},
+	{
+		"count": 4,
+		"card": {
+			"name": "Deal 2 Damage",
+			"cost": 2,
+			"actions": {
+				"deal": 2
+			}
+		}
+	},
+	{
+		"count": 2,
+		"card": {
+			"name": "Deal 3 Damage",
+			"cost": 3,
+			"actions": {
+				"deal": 3
+			}
+		}
+	},
+	{
+		"count": 2,
+		"card": {
+			"name": "Deal 4 Damage",
+			"cost": 4,
+			"actions": {
+				"deal": 4
+			}
+		}
+	},
+	{
+		"count": 2,
+		"card": {
+			"name": "Deal 5 Damage",
+			"cost": 5,
+			"actions": {
+				"deal": 5
+			}
+		}
+	},
+	{
+		"count": 5,
+		"card": {
+			"name": "Heal 1 Damage",
+			"cost": 1,
+			"actions": {
+				"heal": 1
+			}
+		}
+	},
+	{
+		"count": 2,
+		"card": {
+			"name": "Heal 2 Damage",
+			"cost": 2,
+			"actions": {
+				"heal": 2
+			}
+		}
+	},
+	{
+		"count": 2,
+		"card": {
+			"name": "Deal & Draw",
+			"cost": 1,
+			"actions": {
+				"deal": 1,
+				"drawSelf": 1
+			}
+		}
+	},
+	{
+		"count": 1,
+		"card": {
+			"name": "Epic Roar!",
+			"rarity": "Legendary",
+			"cost": 5,
+			"actions": {
+				"msg": "You will never defeat me!",
+				"deal": 4,
+				"addManaTotal": 1
+			}
+		}
+	}
+]
