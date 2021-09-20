@@ -1,7 +1,7 @@
 {
-	"config": "..\\..\\Data\\DefaultGameType.json",
+	"config": "Data\\DefaultGameType.json",
 	"players": [
-		"..\\..\\Data\\PlayerDef1.json",
-		"..\\..\\Data\\PlayerDef2.json"
+		"Data\\PlayerDef1.json",
+		"Data\\PlayerDef2.json"
 	]
 }
