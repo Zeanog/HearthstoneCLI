@@ -2,10 +2,10 @@
 	{
 		"count": 10,
 		"card": {
-			"name":"Deal 10 Damage",
+			"name":"Deal 1 Damage",
 			"cost": 1,
 			"actions": {
-				"deal": 10
+				"deal": 1
 			}
 		}
 	},
