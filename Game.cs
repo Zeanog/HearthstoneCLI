@@ -157,7 +157,7 @@ public class Game {
                     Console.Write(player.ToString());
 
                     var foreColor = Console.ForegroundColor;
-                    Console.ForegroundColor = player.ManaCount <= 0 ? ConsoleColor.Green : ConsoleColor.Yellow;
+                    Console.ForegroundColor = player.ManaCount <= 0 || player.Hand.Count <= 0 ? ConsoleColor.Green : ConsoleColor.Yellow;
                     Console.WriteLine("d) Done with turn");
                     Console.ResetColor();
 
