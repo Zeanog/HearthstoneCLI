@@ -27,8 +27,6 @@ public class Game {
         m_Instance = null;
     }
 
-    protected Random m_RNG = new Random( DateTime.UtcNow.Millisecond );
-
     protected List<Player> m_Players = new List<Player>();
     protected int m_InitialPlayerIndex = 0;
 
@@ -110,7 +108,10 @@ public class Game {
                 player.DrawCards(CurrentConfig.InitialHandSize);
             }
 
-            m_InitialPlayerIndex = m_RNG.Next(0, playerDefs.Length);
+            using (var rngSlip = Neo.Utility.DataStructureLibrary<Random>.Instance.CheckOut(DateTime.UtcNow.Millisecond))
+            {
+                m_InitialPlayerIndex = rngSlip.Value.Next(0, playerDefs.Length);
+            }
         }
         catch( Exception ex )
         {

@@ -1,4 +1,4 @@
 {
 	"name": "James",
-	"deck": "Data\\DefaultDeck.json"
+	"deck": "..\\..\\Data\\DefaultDeck.json"
 }

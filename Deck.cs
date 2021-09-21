@@ -59,7 +59,6 @@ public class DeckLoader : DataLoader {
 }
 
 public class Deck {
-    protected Random m_Random = new Random();
     public LinkedList<Card> Cards {
         get;
     } = new LinkedList<Card>();
@@ -73,19 +72,22 @@ public class Deck {
     {
         int cardsToShuffle = Cards.Count / 2;
 
-        for( int ix = 0; ix < cardsToShuffle; ++ix ) {
-            int newPlace = m_Random.Next(Cards.Count - 1);
-
-            var cardNode = Cards.First;
-            Cards.RemoveFirst();
-
-            LinkedListNode<Card> currentNode = Cards.First;
-            for(int iy = 0; iy < newPlace; ++iy)
+        using (var rngSlip = Neo.Utility.DataStructureLibrary<Random>.Instance.CheckOut(DateTime.UtcNow.Millisecond))
+        {
+            for (int ix = 0; ix < cardsToShuffle; ++ix)
             {
-                
-                currentNode = currentNode.Next;
+                int newPlace = rngSlip.Value.Next(Cards.Count / 2, Cards.Count - 1);
+
+                var cardNode = Cards.First;
+                Cards.RemoveFirst();
+
+                LinkedListNode<Card> currentNode = Cards.First;
+                for (int iy = 0; iy < newPlace; ++iy)
+                {
+                    currentNode = currentNode.Next;
+                }
+                Cards.AddAfter(currentNode, cardNode);
             }
-            Cards.AddAfter(currentNode, cardNode);
         }
     }
 
@@ -108,7 +110,10 @@ public class Deck {
             return null;
         }
 
-        int newIndex = m_Random.Next(Cards.Count - 1);
+        var rngSlip = Neo.Utility.DataStructureLibrary<Random>.Instance.CheckOut(DateTime.UtcNow.Millisecond);
+        int newIndex = rngSlip.Value.Next(Cards.Count - 1);
+        rngSlip.Dispose();
+
         LinkedListNode<Card> currentNode = Cards.First;
         for (int iy = 0; iy < newIndex; ++iy)
         {

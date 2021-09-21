@@ -30,37 +30,37 @@ namespace Neo.Utility {
 
         public readonly static DataStructureLibrary<T> Instance = new DataStructureLibrary<T>();
 
-        protected LinkedList<T> available = new LinkedList<T>();
-        protected LinkedList<T> checkedOut = new LinkedList<T>();
+        protected LinkedList<T> m_Available = new LinkedList<T>();
+        protected LinkedList<T> m_CheckedOut = new LinkedList<T>();
 
         public CheckoutSlip CheckOut(params object[] constructorArgs)
         {
-            if (available.Count <= 0)
+            if (m_Available.Count <= 0)
             {
                 T inst = (T)Activator.CreateInstance(typeof(T), constructorArgs);
                 System.Diagnostics.Debug.Assert(inst != null);
-                available.AddLast(inst);
+                m_Available.AddLast(inst);
             }
 
-            LinkedListNode<T> node = available.Last;
-            available.Remove(node.Value);
+            LinkedListNode<T> node = m_Available.Last;
+            m_Available.Remove(node.Value);
 
-            checkedOut.AddLast(node);
+            m_CheckedOut.AddLast(node);
 
             return new CheckoutSlip(node.Value);
         }
 
         protected void Return(CheckoutSlip slip)
         {
-            LinkedListNode<T> node = checkedOut.Find(slip.Value);
+            LinkedListNode<T> node = m_CheckedOut.Find(slip.Value);
             if (node == null)
             {
                 slip = null;
                 return;
             }
 
-            checkedOut.Remove(node);
-            available.AddLast(node);
+            m_CheckedOut.Remove(node);
+            m_Available.AddLast(node);
         }
 
         // Hiding the contructor
@@ -70,12 +70,12 @@ namespace Neo.Utility {
 
         public void Dispose()
         {
-            System.Diagnostics.Debug.Assert(checkedOut.Count <= 0);
+            System.Diagnostics.Debug.Assert(m_CheckedOut.Count <= 0);
             Type tType = typeof(T);
             var methodInfo = tType.GetMethod("Dispose", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
             if (methodInfo != null)
             {
-                foreach (var node in available)
+                foreach (var node in m_Available)
                 {
                     methodInfo.Invoke(node, null);
                 }
