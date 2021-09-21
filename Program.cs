@@ -86,7 +86,7 @@ namespace HearthstoneCLI {
                     Game.Create(FindCmdArg("GameConfig", ""), FindCmdArg("Player1Def", ""), FindCmdArg("Player2Def", ""));
                 }
                 
-                while (!Game.Instance.IsOver && Game.Instance.ExecuteNextTurn())
+                while (!Game.Instance.IsOver && Game.Instance.Execute())
                 {
                 }
             }

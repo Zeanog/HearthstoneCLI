@@ -124,13 +124,18 @@ public class Game {
         
     }
 
-    public bool ExecuteNextTurn()
+    public bool Execute()
     {
-        Console.WriteLine("***************** Round {0} *****************", ++RoundCount);
         try
         {
             for (int ix = m_InitialPlayerIndex; ix < m_Players.Count; ix = (ix + 1) % m_Players.Count)
             {
+                if(ix == m_InitialPlayerIndex)// Basically show this everytime start player comes up
+                {
+                    Console.WriteLine("\n\n***************** Round {0} *****************", ++RoundCount);
+                }
+                
+
                 var player = m_Players[ix];
                 var otherPlayer = m_Players[(ix + 1) % m_Players.Count];
 
