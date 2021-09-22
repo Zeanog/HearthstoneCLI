@@ -76,7 +76,7 @@ public class Deck {
         {
             for (int ix = 0; ix < cardsToShuffle; ++ix)
             {
-                int newPlace = rngSlip.Value.Next(Cards.Count / 2, Cards.Count - 1);
+                int newPlace = rngSlip.Value.Next(cardsToShuffle - 1, Cards.Count - 1);
 
                 var cardNode = Cards.First;
                 Cards.RemoveFirst();

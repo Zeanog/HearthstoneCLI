@@ -68,7 +68,7 @@ public class Game {
         var gameDef = JsonConvert.DeserializeObject<Dictionary<string, object>>(encodedData, DataLoader.Settings);
 
         List<string> playerDefs = JsonConvert.DeserializeObject<List<string>>(gameDef["players"].ToString());
-        m_Instance = new Game(gameDef["config"].ToString(), playerDefs.ToArray());
+        Create(gameDef["config"].ToString(), playerDefs.ToArray());
     }
 
     protected Game(string configPath, params string[] playerDefs)
@@ -134,7 +134,6 @@ public class Game {
                 {
                     Console.WriteLine("\n\n***************** Round {0} *****************", ++RoundCount);
                 }
-                
 
                 var player = m_Players[ix];
                 var otherPlayer = m_Players[(ix + 1) % m_Players.Count];
@@ -161,7 +160,6 @@ public class Game {
                 {
                     Console.Write(player.ToString());
 
-                    var foreColor = Console.ForegroundColor;
                     Console.ForegroundColor = player.ManaCount <= 0 || player.Hand.Count <= 0 ? ConsoleColor.Green : ConsoleColor.Yellow;
                     Console.WriteLine("d) Done with turn");
                     Console.ResetColor();

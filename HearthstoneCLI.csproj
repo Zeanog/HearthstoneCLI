@@ -54,6 +54,7 @@
     <Compile Include="Card.cs" />
     <Compile Include="DataStructureLibrary.cs" />
     <Compile Include="Deck.cs" />
+    <Compile Include="Emitter.cs" />
     <Compile Include="Extensions\MathExtensions.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Json\Converters\AConverter_Enum.cs" />
