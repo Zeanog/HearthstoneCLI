@@ -9,6 +9,8 @@ public abstract class DataLoader {
     static DataLoader()
     {
         Settings.Converters.Add(new Converter_CardRarity());
+        Settings.Converters.Add(new Converter_TupleFloatFloat());
+        Settings.Converters.Add(new Converter_TupleIntInt());
         Settings.DefaultValueHandling = DefaultValueHandling.Ignore;
         Settings.NullValueHandling = NullValueHandling.Ignore;
     }

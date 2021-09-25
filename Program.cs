@@ -68,8 +68,6 @@ namespace HearthstoneCLI {
             m_CmdLineHandlers.Add("-g", handler);
         }
 
-        static Emitter m_TestEmitter = new Emitter();
-
         static void Main(string[] args)
         {
             try
@@ -86,10 +84,10 @@ namespace HearthstoneCLI {
                     Game.Create(FindCmdArg("GameConfig", ""), FindCmdArg("Player1Def", ""), FindCmdArg("Player2Def", ""));
                 }
 
-                //Emitter.ProcessEmitters();
+                Emitter.ProcessEmitters();
 
-                //m_TestEmitter.Origin = new Vector2i() { X = Console.WindowWidth / 2, Y = Console.WindowHeight / 2 };
-                //m_TestEmitter.Start();
+                var testEmitter = EmitterLoader.Create( "..\\..\\Data\\Particles\\ParticleSystem.json", new Vector2i() { X = Console.WindowWidth / 2, Y = Console.WindowHeight / 2 } );
+                testEmitter.Start();
 
                 while (!Game.Instance.IsOver && Game.Instance.Execute())
                 {

@@ -58,6 +58,7 @@
     <Compile Include="Extensions\MathExtensions.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Json\Converters\AConverter_Enum.cs" />
+    <Compile Include="Json\Converters\AConverter_Tuple.cs" />
     <Compile Include="Json\Converters\Converter_CardRarity.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

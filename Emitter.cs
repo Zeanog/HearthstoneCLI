@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.IO;
 
 public struct Vector2i {
     public int X;
@@ -68,25 +70,26 @@ public class Particle : IDisposable {
     public Vector2f     PrevOrigin;
     public Vector2f     Origin;
     public Vector2f     Velocity;
-
-    public ConsoleColor Color;
-    public char         Image;
-
-    public float        Lifetime = 2.0f;
-    public float        GravityScale = 1.0f;
-
-    public Particle( char image, ConsoleColor color )
-    {
-        Image = image;
-        Color = color;
-        PrevOrigin = Origin;
-    }
+    public float        Lifetime;
 
     public void Dispose()
     {
         Console.CursorLeft = (int)PrevOrigin.X;
         Console.CursorTop = Console.WindowHeight - (int)PrevOrigin.Y;
         Console.Write(' ');
+    }
+}
+
+public class EmitterLoader {
+    public static Emitter Create(string emitterPath, Vector2i origin)
+    {
+        var data = File.ReadAllText(emitterPath);
+        var particleDefs = JsonConvert.DeserializeObject<List<Emitter.ParticleDef>>(data, DataLoader.Settings);
+
+        Emitter emitter = new Emitter(particleDefs);
+        emitter.Origin = origin;
+        
+        return emitter;
     }
 }
 
@@ -129,46 +132,63 @@ public class Emitter {
 
     public readonly Vector2f Gravity = new Vector2f() { X = 0.0f, Y = -9.8f };
 
-    protected LinkedList<Particle> m_Particles = new LinkedList<Particle>();
+    public class ParticleDef {
+        [JsonProperty("count")]
+        public int Count;
+
+        [JsonProperty("launchDirection")]
+        public Tuple<int, int> LaunchDirection;
+
+        [JsonProperty("image")]
+        public char Image;
+
+        [JsonProperty("color")]
+        public ConsoleColor Color;
+
+        [JsonProperty("lifetime")]
+        public float Lifetime;
+
+        [JsonProperty("gravityScale")]
+        public float GravityScale;
+
+        [JsonProperty("startSpeed")]
+        public float StartSpeed;
+
+        [JsonProperty("endSpeed")]
+        public float EndSpeed;
+    }
+
+    protected Dictionary<ParticleDef, LinkedList<Particle>> m_Particles = new Dictionary<ParticleDef, LinkedList<Particle>>();
 
     public Vector2i Origin {
         get;
         set;
     }
 
+    public bool DestroyWhenDone;
+
+    public Emitter( List<Emitter.ParticleDef> particleDefs )
+    {
+        foreach( var def in particleDefs )
+        {
+            m_Particles.Add(def, new LinkedList<Particle>());
+        }
+    }
+
     public void Start()
     {
-        for (int ix = 0; ix < 10; ++ix)
+        foreach( var def in m_Particles.Keys )
         {
-            Particle p = new Particle('#', ConsoleColor.DarkRed);
-            p.Origin = (Vector2f)Origin;
-            p.PrevOrigin = p.Origin;
-            p.Velocity = Vector2f.Random(20.0f, 160.0f) * 15.0f;
-            p.Lifetime = 1.0f + (float)MathExtensions.RNG.NextDouble() * 2.0f;
-            m_Particles.AddLast(p);
-        }
-
-        //for (int ix = 0; ix < 15; ++ix)
-        //{
-        //    Particle p = new Particle('@', ConsoleColor.Gray);
-        //    p.Origin = (Vector2f)Origin;
-        //    p.PrevOrigin = p.Origin;
-        //    p.Velocity = Vector2f.Random(20.0f, 160.0f) * 1f;
-        //    p.GravityScale = 0.01f;
-        //    p.Lifetime = 5.0f;
-        //    m_Particles.AddLast(p);
-        //}
-
-        for (int ix = 0; ix < 5; ++ix)
-        {
-            Particle p = new Particle('^', ConsoleColor.Red);
-            p.Origin = (Vector2f)Origin;
-            p.PrevOrigin = p.Origin;
-            p.Lifetime = 0.5f;
-            p.Velocity = Vector2f.Random(80.0f, 100.0f) * 15.0f;
-            p.GravityScale = 1f;
-            p.Lifetime = 1.0f + (float)MathExtensions.RNG.NextDouble() * 1f;
-            m_Particles.AddLast(p);
+            var particleList = m_Particles[def];
+            for( int ix = 0; ix < def.Count; ++ix )
+            {
+                Particle p = new Particle();
+                p.Origin = (Vector2f)Origin;
+                p.PrevOrigin = p.Origin;
+                p.Lifetime = def.Lifetime;
+                p.Velocity = Vector2f.Random(def.LaunchDirection.Item1, def.LaunchDirection.Item2) * def.StartSpeed;
+                particleList.AddLast(p);
+            }
         }
 
         Register(this);
@@ -208,41 +228,56 @@ public class Emitter {
     public void UpdateFrame(float deltaTime)
     {
         Vector2f deltaGravity = Gravity * deltaTime;
-        foreach (var particle in m_Particles)
-        {
-            particle.Velocity += deltaGravity * particle.GravityScale;
-            particle.PrevOrigin = particle.Origin;
-            particle.Origin += (particle.Velocity * deltaTime);
-            particle.Lifetime -= deltaTime;
-        }
 
-        LinkedListNode<Particle> p = m_Particles.First;
-        while( p != null )
+        foreach (var def in m_Particles.Keys)
         {
-            LinkedListNode<Particle> next = p.Next;
-            if (IsParticleOutofBounds(p.Value) || p.Value.Lifetime <= 0)
+            var particleList = m_Particles[def];
+
+            LinkedListNode<Particle> node = particleList.First;
+            while (node != null)
             {
-                p.Value.Dispose();
-                m_Particles.Remove(p);
-            }
+                node.Value.Velocity += deltaGravity * def.GravityScale;
+                node.Value.PrevOrigin = node.Value.Origin;
+                node.Value.Origin += (node.Value.Velocity * deltaTime);
+                node.Value.Lifetime -= deltaTime;
 
-            p = next;
+                LinkedListNode<Particle> next = node.Next;
+                if (IsParticleOutofBounds(node.Value) || node.Value.Lifetime <= 0)
+                {
+                    node.Value.Dispose();
+                    particleList.Remove(node);
+                }
+
+                node = next;
+            }
         }
+
+        //if( m_Particles.Count <= 0 && DestroyWhenDone )
+        //{
+        //    Unregister(this);//TODO: Find a real way to do this.  Some one could have a reference.  Wrapper struct??
+        //}
     }
 
-    //TODO: Need a way to removed char from last frame
     public void     RenderFrame()
     {
-        foreach( var particle in m_Particles )
+        foreach (var def in m_Particles.Keys)
         {
-            Console.CursorLeft = (int)particle.PrevOrigin.X;
-            Console.CursorTop = Console.WindowHeight - (int)particle.PrevOrigin.Y;
-            Console.Write(' ');
+            var particleList = m_Particles[def];
 
-            Console.ForegroundColor = particle.Color;
-            Console.CursorLeft = (int)particle.Origin.X;
-            Console.CursorTop = Console.WindowHeight - (int)particle.Origin.Y;
-            Console.Write(particle.Image);
+            LinkedListNode<Particle> node = particleList.First;
+            while (node != null)
+            {
+                Console.CursorLeft = (int)node.Value.PrevOrigin.X;
+                Console.CursorTop = Console.WindowHeight - (int)node.Value.PrevOrigin.Y;
+                Console.Write(' ');
+
+                Console.ForegroundColor = def.Color;
+                Console.CursorLeft = (int)node.Value.Origin.X;
+                Console.CursorTop = Console.WindowHeight - (int)node.Value.Origin.Y;
+                Console.Write(def.Image);
+
+                node = node.Next;
+            }
         }
     }
 }

@@ -1,0 +1,32 @@
+[
+	{
+		"count": 5,
+		"launchDirection": "20, 160",
+		"color": "DarkRed",
+		"image": "*",
+		"lifetime": 3.0,
+		"gravityScale": 1,
+		"startSpeed": 5,
+		"endSpeed": 5
+	},
+	{
+		"count": 15,
+		"launchDirection": "20, 160",
+		"color": "DarkGray",
+		"image": "@",
+		"lifetime": 5.0,
+		"gravityScale": 0.05,
+		"startSpeed": 1.0,
+		"endSpeed": 5
+	},
+	{
+		"count": 15,
+		"launchDirection": "80, 100",
+		"color": "Red",
+		"image": "^",
+		"lifetime": 1,
+		"gravityScale": 0,
+		"startSpeed": 5,
+		"endSpeed": 5
+	}
+]
