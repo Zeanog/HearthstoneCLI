@@ -84,10 +84,10 @@ namespace HearthstoneCLI {
                     Game.Create(FindCmdArg("GameConfig", ""), FindCmdArg("Player1Def", ""), FindCmdArg("Player2Def", ""));
                 }
 
-                Emitter.ProcessEmitters();
+                //Emitter.ProcessEmitters();
 
-                var testEmitter = EmitterLoader.Create( "..\\..\\Data\\Particles\\ParticleSystem.json", new Vector2i() { X = Console.WindowWidth / 2, Y = Console.WindowHeight / 2 } );
-                testEmitter.Start();
+                //var testEmitter = EmitterLoader.Create( "..\\..\\Data\\Particles\\ParticleSystem.json", new Vector2i() { X = Console.WindowWidth / 2, Y = Console.WindowHeight / 2 } );
+                //testEmitter.Start();
 
                 while (!Game.Instance.IsOver && Game.Instance.Execute())
                 {
