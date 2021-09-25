@@ -22,16 +22,9 @@ public struct Vector2i {
         return new Vector2i() { X = lhs.X + rhs.X, Y = lhs.Y + rhs.Y };
     }
 
-    public static explicit operator Vector2f(Vector2i lhs)
+    public static explicit operator Vector2f(Vector2i rhs)
     {
-        return new Vector2f() { X = lhs.X, Y = lhs.Y };
-    }
-
-    public static Vector2i Random(float length, float minAngle, float maxAngle)
-    {
-        float angle = minAngle + (maxAngle - minAngle) * (float)MathExtensions.RNG.NextDouble();
-
-        return new Vector2i() { X = (int)(length * (float)Math.Cos(angle)), Y = (int)(length * (float)Math.Sin(angle)) };
+        return new Vector2f() { X = rhs.X, Y = rhs.Y };
     }
 }
 
@@ -55,9 +48,9 @@ public struct Vector2f {
         return new Vector2f() { X = lhs.X + rhs.X, Y = lhs.Y + rhs.Y };
     }
 
-    public static explicit operator Vector2i(Vector2f lhs)
+    public static explicit operator Vector2i(Vector2f rhs)
     {
-        return new Vector2i() { X = (int)lhs.X, Y = (int)lhs.Y };
+        return new Vector2i() { X = (int)rhs.X, Y = (int)rhs.Y };
     }
 
     public static Vector2f Random(float minAngle, float maxAngle)
@@ -111,7 +104,7 @@ public class Emitter {
 
     public static async Task  ProcessEmitters()
     {
-        float deltaTime = 1f / 30f;
+        float deltaTime = 1f / 10f;
         Vector2i prevCursor;
         while (true)
         {
@@ -134,7 +127,7 @@ public class Emitter {
         }
     }
 
-    public readonly Vector2f Gravity = new Vector2f() { X = 0.0f, Y = -5f };
+    public readonly Vector2f Gravity = new Vector2f() { X = 0.0f, Y = -9.8f };
 
     protected LinkedList<Particle> m_Particles = new LinkedList<Particle>();
 
@@ -145,24 +138,26 @@ public class Emitter {
 
     public void Start()
     {
-        for (int ix = 0; ix < 5; ++ix)
+        for (int ix = 0; ix < 10; ++ix)
         {
             Particle p = new Particle('#', ConsoleColor.DarkRed);
             p.Origin = (Vector2f)Origin;
             p.PrevOrigin = p.Origin;
-            p.Velocity = Vector2f.Random(70.0f, 110.0f) * 10.0f;
+            p.Velocity = Vector2f.Random(20.0f, 160.0f) * 15.0f;
+            p.Lifetime = 1.0f + (float)MathExtensions.RNG.NextDouble() * 2.0f;
             m_Particles.AddLast(p);
         }
 
-        for (int ix = 0; ix < 15; ++ix)
-        {
-            Particle p = new Particle('@', ConsoleColor.Gray);
-            p.Origin = (Vector2f)Origin;
-            p.PrevOrigin = p.Origin;
-            p.Velocity = Vector2f.Random(20.0f, 160.0f) * 1.0f;
-            p.GravityScale = 0.01f;
-            m_Particles.AddLast(p);
-        }
+        //for (int ix = 0; ix < 15; ++ix)
+        //{
+        //    Particle p = new Particle('@', ConsoleColor.Gray);
+        //    p.Origin = (Vector2f)Origin;
+        //    p.PrevOrigin = p.Origin;
+        //    p.Velocity = Vector2f.Random(20.0f, 160.0f) * 1f;
+        //    p.GravityScale = 0.01f;
+        //    p.Lifetime = 5.0f;
+        //    m_Particles.AddLast(p);
+        //}
 
         for (int ix = 0; ix < 5; ++ix)
         {
@@ -171,7 +166,8 @@ public class Emitter {
             p.PrevOrigin = p.Origin;
             p.Lifetime = 0.5f;
             p.Velocity = Vector2f.Random(80.0f, 100.0f) * 15.0f;
-            p.GravityScale = 0.5f;
+            p.GravityScale = 1f;
+            p.Lifetime = 1.0f + (float)MathExtensions.RNG.NextDouble() * 1f;
             m_Particles.AddLast(p);
         }
 
@@ -217,13 +213,14 @@ public class Emitter {
             particle.Velocity += deltaGravity * particle.GravityScale;
             particle.PrevOrigin = particle.Origin;
             particle.Origin += (particle.Velocity * deltaTime);
+            particle.Lifetime -= deltaTime;
         }
 
         LinkedListNode<Particle> p = m_Particles.First;
         while( p != null )
         {
             LinkedListNode<Particle> next = p.Next;
-            if (IsParticleOutofBounds(p.Value))
+            if (IsParticleOutofBounds(p.Value) || p.Value.Lifetime <= 0)
             {
                 p.Value.Dispose();
                 m_Particles.Remove(p);
