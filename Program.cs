@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace HearthstoneCLI {
     class Program {
@@ -70,6 +68,8 @@ namespace HearthstoneCLI {
             m_CmdLineHandlers.Add("-g", handler);
         }
 
+        static Emitter m_TestEmitter = new Emitter();
+
         static void Main(string[] args)
         {
             try
@@ -85,7 +85,12 @@ namespace HearthstoneCLI {
                 {
                     Game.Create(FindCmdArg("GameConfig", ""), FindCmdArg("Player1Def", ""), FindCmdArg("Player2Def", ""));
                 }
-                
+
+                //Emitter.ProcessEmitters();
+
+                //m_TestEmitter.Origin = new Vector2i() { X = Console.WindowWidth / 2, Y = Console.WindowHeight / 2 };
+                //m_TestEmitter.Start();
+
                 while (!Game.Instance.IsOver && Game.Instance.Execute())
                 {
                 }

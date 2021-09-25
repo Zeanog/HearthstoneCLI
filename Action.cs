@@ -57,7 +57,7 @@ public abstract class Action_Discrete : AAction {
 public class Action_CauseDamage : Action_Discrete {
     public Action_CauseDamage(string name, int amount) : base(name, amount)
     {
-        Name = "deal";
+
     }
 
     public override void Execute(Player self, Player otherPlayer)
@@ -70,7 +70,7 @@ public class Action_CauseDamage : Action_Discrete {
 public class Action_HealDamage : Action_Discrete {
     public Action_HealDamage(string name, int amount) : base(name, amount)
     {
-        Name = "heal";
+        
     }
 
     public override void Execute(Player self, Player otherPlayer)
